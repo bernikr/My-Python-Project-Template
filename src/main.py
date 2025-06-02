@@ -1,14 +1,14 @@
+from __future__ import annotations
+
+import importlib
 import logging
-from collections.abc import AsyncGenerator
-from contextlib import asynccontextmanager
-from typing import Any
+import pkgutil
+from typing import TYPE_CHECKING, Any
 
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.triggers.cron import CronTrigger
-from fastapi import FastAPI
+from init import VERSION, api
 
-from app import JOBS, router
-from config import VERSION
+if TYPE_CHECKING:
+    from types import ModuleType
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -16,32 +16,33 @@ logging.basicConfig(
     style="{",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
-
 logger = logging.getLogger(__name__)
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncGenerator[None, Any]:  # noqa: ARG001, RUF029
-    scheduler = AsyncIOScheduler()
-    for job, args in JOBS.items():
-        if isinstance(args, str):
-            scheduler.add_job(job, CronTrigger.from_crontab(args))
-        elif isinstance(args, dict):
-            scheduler.add_job(job, args.get("trigger", "cron"), **{k: v for k, v in args.items() if k != "trigger"})
-    scheduler.start()
-    yield
-
-
-app = FastAPI(lifespan=lifespan)
-app.include_router(router)
-
-
-@app.get("/version")
+@api.get("/version")
 def index() -> dict[str, Any]:
     return {"version": VERSION}
 
 
+def import_submodules(package: str | ModuleType) -> dict[str, ModuleType]:
+    if isinstance(package, str):
+        package = importlib.import_module(package)
+    results = {}
+    for _, name, is_pkg in pkgutil.walk_packages(package.__path__):
+        full_name = package.__name__ + "." + name
+        try:
+            results[full_name] = importlib.import_module(full_name)
+        except ModuleNotFoundError:
+            continue
+        if is_pkg:
+            results.update(import_submodules(full_name))
+    return results
+
+
+modules = import_submodules("app")
+logger.info("Loaded %i modules: %s", len(modules), ", ".join(modules.keys()))
+
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("main:app", host="0.0.0.0", port=5000, log_level="info", reload=True)  # noqa: S104
+    uvicorn.run("main:api", host="0.0.0.0", port=5000, log_level="info", reload=True)  # noqa: S104

@@ -11,7 +11,7 @@ MAIN_BRANCH = "main"
 
 VERSION_OCCURRENCES = [
     ("pyproject.toml", r'(version = ")(\S+)(")', 1),
-    ("src/config.py", r'(VERSION = ")(\S+)(")', 1),
+    ("src/init.py", r'(VERSION = ")(\S+)(")', 1),
 ]
 UPDATE_LOCKFILE = True
 
