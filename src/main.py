@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from types import ModuleType
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format="{asctime} | {levelname} | {name} | {message}",
     style="{",
     datefmt="%Y-%m-%d %H:%M:%S",

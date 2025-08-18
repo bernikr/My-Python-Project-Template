@@ -1,9 +1,10 @@
 [project]
 name = "my-template"
 version = "0.1.0"
+requires-python = ">=3.12"
 dependencies = [
-    "apscheduler>=3.11.0",
-    "fastapi[standard]>=0.115.12",
+    "apscheduler>=4.0.0a6",
+    "fastapi[standard]>=0.116.1",
 ]
 
 [tool.ruff]
@@ -15,15 +16,20 @@ select = ["ALL"]
 ignore = [
   "D",      # pydocstyle
   "CPY",    # flake8-copyright
-  "PGH003", # blanket-type-ignore
-  "COM812", # trailing comma missing (not recommended when using formatter)
 ]
 
 [dependency-groups]
 dev = [
-    "gitpython>=3.1.44",
-    "pre-commit>=4.2.0",
-    "ruff>=0.11.12",
+    "gitpython>=3.1.45",
+    "mypy>=1.17.1",
+    "pre-commit>=4.3.0",
+    "ruff>=0.12.9",
     "semver>=3.0.4",
-    "uvicorn>=0.34.3",
+    "uvicorn>=0.35.0",
 ]
+
+[tool.mypy]
+strict = true
+allow_redefinition = true
+local_partial_types = true
+allow_redefinition_new =true

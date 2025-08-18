@@ -1,6 +1,8 @@
 import logging
 
-from init import api, scheduler
+from apscheduler.triggers.interval import IntervalTrigger
+
+from init import api, schedule
 
 logger = logging.getLogger(__name__)
 
@@ -10,6 +12,6 @@ def index() -> str:
     return "Hello World"
 
 
-@scheduler.scheduled_job("interval", seconds=5)
+@schedule(IntervalTrigger(seconds=5))
 def test() -> None:
     logger.info("test")

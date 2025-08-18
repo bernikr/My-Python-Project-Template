@@ -15,7 +15,7 @@ VERSION_OCCURRENCES = [
 ]
 UPDATE_LOCKFILE = True
 
-versions = set()
+version_strings: set[str] = set()
 has_warnings = False
 
 for filename, regex, occurrences in VERSION_OCCURRENCES:
@@ -24,13 +24,13 @@ for filename, regex, occurrences in VERSION_OCCURRENCES:
     if len(res) != occurrences:
         print(f"WARNING: version occurrence mismatch in {filename}")
         has_warnings = True
-    versions.update(r[1] for r in res)
+    version_strings.update(r[1] for r in res)
 
-if len(versions) != 1:
-    print(f"WARNING: multiple versions found: {versions}")
+if len(version_strings) != 1:
+    print(f"WARNING: multiple versions found: {version_strings}")
     has_warnings = True
 
-version = max(Version.parse(v) for v in versions)
+version = max(Version.parse(v) for v in version_strings)
 
 if version.prerelease:
     versions = {
