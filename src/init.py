@@ -10,7 +10,7 @@ VERSION = "0.1.0"
 
 scheduler = AsyncScheduler()
 
-Job = Callable[[], Awaitable[None]] | Callable[[], None]
+Job = Callable[[], Awaitable[None] | None]
 
 _scheduled_jobs: list[tuple[Job, Trigger]] = []
 
