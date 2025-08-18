@@ -378,7 +378,6 @@ dev = [
     { name = "pre-commit" },
     { name = "ruff" },
     { name = "semver" },
-    { name = "uvicorn" },
 ]
 
 [package.metadata]
@@ -394,7 +393,6 @@ dev = [
     { name = "pre-commit", specifier = ">=4.3.0" },
     { name = "ruff", specifier = ">=0.12.9" },
     { name = "semver", specifier = ">=3.0.4" },
-    { name = "uvicorn", specifier = ">=0.35.0" },
 ]
 
 [[package]]
